@@ -152,7 +152,8 @@ start_daemon() {
             # Look for the key ready state patterns
             if echo "$line" | grep -q "│ >" || \
                echo "$line" | grep -q "No, and tell Claude what to do differently"; then
-                python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE" 2>&1
+                # Play audio without redirecting audio output, only log text output
+                python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE" 2>> $LOG_FILE
                 sleep 3  # Prevent spam notifications
             fi
         done
