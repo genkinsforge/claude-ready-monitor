@@ -4,12 +4,12 @@ A background daemon that monitors your Claude Code session and plays audio notif
 
 ## Features
 
-- 🔔 **Audio Notifications**: Plays sound when Claude Code is ready for input
-- 🎵 **Custom MP3 Support**: Use your own MP3 files for notifications
-- 🔄 **Background Operation**: Runs as a daemon, no terminal windows required
-- 📊 **Process Management**: Easy start/stop/restart/status commands
-- 📝 **Logging**: All activity logged for debugging
-- 🔧 **Configurable**: Persistent configuration between sessions
+- **Audio Notifications**: Plays sound when Claude Code is ready for input
+- **Custom MP3 Support**: Use your own MP3 files for notifications
+- **Background Operation**: Runs as a daemon, no terminal windows required
+- **Process Management**: Easy start/stop/restart/status commands
+- **Logging**: All activity logged for debugging
+- **Configurable**: Persistent configuration between sessions
 
 ## Use Cases
 
