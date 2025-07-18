@@ -90,29 +90,6 @@ if __name__ == "__main__":
 PYEOF
 }
 
-# Monitor function
-monitor_claude() {
-    load_config
-    create_notification_handler
-    echo "$(date) - Starting Claude Code monitor with sound: $SOUND_FILE" >> $LOG_FILE
-    
-    # Use script to capture all terminal output
-    script -f -q "$SESSION_LOG" &
-    SCRIPT_PID=$!
-    
-    # Monitor the log file for ready patterns
-    tail -f "$SESSION_LOG" | while read -r line; do
-        # Look for the key ready state patterns
-        if echo "$line" | grep -q "│ >" || \
-           echo "$line" | grep -q "No, and tell Claude what to do differently"; then
-            python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE" >> $LOG_FILE 2>&1
-            sleep 3  # Prevent spam notifications
-        fi
-    done
-    
-    # Cleanup
-    kill $SCRIPT_PID 2>/dev/null
-}
 
 # Set sound file
 set_sound() {
@@ -159,7 +136,31 @@ start_daemon() {
     load_config
     echo "Starting Claude Code Ready Monitor in background..."
     echo "Sound: ${SOUND_FILE:-"system beep"}"
-    nohup bash -c "monitor_claude" > $LOG_FILE 2>&1 &
+    
+    # Start monitoring in background with proper function access
+    (
+        load_config
+        create_notification_handler
+        echo "$(date) - Starting Claude Code monitor with sound: $SOUND_FILE"
+        
+        # Use script to capture all terminal output
+        script -f -q "$SESSION_LOG" &
+        SCRIPT_PID=$!
+        
+        # Monitor the log file for ready patterns
+        tail -f "$SESSION_LOG" | while read -r line; do
+            # Look for the key ready state patterns
+            if echo "$line" | grep -q "│ >" || \
+               echo "$line" | grep -q "No, and tell Claude what to do differently"; then
+                python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE" 2>&1
+                sleep 3  # Prevent spam notifications
+            fi
+        done
+        
+        # Cleanup
+        kill $SCRIPT_PID 2>/dev/null
+    ) > $LOG_FILE 2>&1 &
+    
     echo $! > $PID_FILE
     echo "Monitor started (PID: $(cat $PID_FILE))"
     echo "Log file: $LOG_FILE"
