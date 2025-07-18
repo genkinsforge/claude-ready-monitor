@@ -1,19 +1,21 @@
-# Log files
+# Configuration and logs
+config.json
 *.log
-
-# PID files
 *.pid
 
-# Config files with potentially sensitive paths
-*.conf
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
-*.pyo
-
-# Generated notification handler (created dynamically)
-ready_notification_mp3.py
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
 # User configuration directory
 .claude-monitor/
@@ -28,3 +30,13 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Test files
+test_*.py
+*_test.py
+test/
+
+# Temporary
+tmp/
+temp/
+*.tmp
