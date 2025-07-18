@@ -3,9 +3,15 @@
 # Monitors Claude Code sessions and plays audio notifications when ready for input
 
 SCRIPT_NAME="claude-ready-monitor"
-PID_FILE="/tmp/${SCRIPT_NAME}.pid"
-LOG_FILE="/tmp/${SCRIPT_NAME}.log"
-CONFIG_FILE="/tmp/${SCRIPT_NAME}.conf"
+SCRIPT_DIR="${HOME}/.claude-monitor"
+PID_FILE="${SCRIPT_DIR}/${SCRIPT_NAME}.pid"
+LOG_FILE="${SCRIPT_DIR}/${SCRIPT_NAME}.log"
+CONFIG_FILE="${SCRIPT_DIR}/${SCRIPT_NAME}.conf"
+NOTIFICATION_HANDLER="${SCRIPT_DIR}/ready_notification_mp3.py"
+SESSION_LOG="${SCRIPT_DIR}/claude_session.log"
+
+# Ensure script directory exists
+mkdir -p "$SCRIPT_DIR"
 
 # Default configuration
 DEFAULT_SOUND_FILE=""
@@ -31,7 +37,8 @@ CONFEOF
 }
 
 # Create notification sound handler
-cat > /tmp/ready_notification_mp3.py << 'PYEOF'
+create_notification_handler() {
+    cat > "$NOTIFICATION_HANDLER" << 'PYEOF'
 import os
 import subprocess
 import datetime
@@ -81,22 +88,24 @@ if __name__ == "__main__":
     sound_type = sys.argv[2] if len(sys.argv) > 2 else "beep"
     play_notification(sound_file, sound_type)
 PYEOF
+}
 
 # Monitor function
 monitor_claude() {
     load_config
+    create_notification_handler
     echo "$(date) - Starting Claude Code monitor with sound: $SOUND_FILE" >> $LOG_FILE
     
     # Use script to capture all terminal output
-    script -f -q /tmp/claude_session.log &
+    script -f -q "$SESSION_LOG" &
     SCRIPT_PID=$!
     
     # Monitor the log file for ready patterns
-    tail -f /tmp/claude_session.log | while read -r line; do
+    tail -f "$SESSION_LOG" | while read -r line; do
         # Look for the key ready state patterns
         if echo "$line" | grep -q "│ >" || \
            echo "$line" | grep -q "No, and tell Claude what to do differently"; then
-            python3 /tmp/ready_notification_mp3.py "$SOUND_FILE" "$SOUND_TYPE" >> $LOG_FILE 2>&1
+            python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE" >> $LOG_FILE 2>&1
             sleep 3  # Prevent spam notifications
         fi
     done
@@ -211,8 +220,9 @@ case "${1:-help}" in
         ;;
     "test")
         load_config
+        create_notification_handler
         echo "Testing notification..."
-        python3 /tmp/ready_notification_mp3.py "$SOUND_FILE" "$SOUND_TYPE"
+        python3 "$NOTIFICATION_HANDLER" "$SOUND_FILE" "$SOUND_TYPE"
         ;;
     "set-sound")
         set_sound "$2"

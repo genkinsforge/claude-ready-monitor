@@ -1,23 +1,22 @@
 # Log files
 *.log
-/tmp/claude_session.log
-/tmp/claude-ready-monitor.log
 
 # PID files
 *.pid
-/tmp/claude-ready-monitor.pid
 
 # Config files with potentially sensitive paths
 *.conf
-/tmp/claude-ready-monitor.conf
 
 # Python cache
 __pycache__/
 *.pyc
 *.pyo
 
-# Generated notification handler
-/tmp/ready_notification_mp3.py
+# Generated notification handler (created dynamically)
+ready_notification_mp3.py
+
+# User configuration directory
+.claude-monitor/
 
 # OS specific
 .DS_Store

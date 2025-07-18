@@ -121,12 +121,14 @@ The script tries multiple methods to play audio, with automatic fallback:
 
 ## File Paths
 
-The script uses these temporary files:
+The script uses these files in your home directory:
 
-- **PID File**: `/tmp/claude-ready-monitor.pid` - Process ID storage
-- **Log File**: `/tmp/claude-ready-monitor.log` - Activity logging
-- **Config File**: `/tmp/claude-ready-monitor.conf` - Sound configuration
-- **Session Log**: `/tmp/claude_session.log` - Terminal output capture
+- **Script Directory**: `~/.claude-monitor/` - Main configuration directory
+- **PID File**: `~/.claude-monitor/claude-ready-monitor.pid` - Process ID storage
+- **Log File**: `~/.claude-monitor/claude-ready-monitor.log` - Activity logging
+- **Config File**: `~/.claude-monitor/claude-ready-monitor.conf` - Sound configuration
+- **Session Log**: `~/.claude-monitor/claude_session.log` - Terminal output capture
+- **Notification Handler**: `~/.claude-monitor/ready_notification_mp3.py` - Generated Python script
 
 ## Requirements
 
